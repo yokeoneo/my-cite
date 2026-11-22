@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Меню бота</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color, #1c1c1e);
+            color: var(--tg-theme-text-color, #ffffff);
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            border: none; border-radius: 10px; padding: 16px;
+            font-size: 16px; font-weight: 500; cursor: pointer;
+            transition: opacity 0.2s; text-align: center; color: white;
+        }
+        .btn:active { opacity: 0.7; }
+        .btn-gray { background-color: #2c2c2e; color: #fff; }
+        .btn-green { background-color: #34c759; color: #fff; }
+        .btn-dark { background-color: #1c1c1e; color: #fff; border: 1px solid #3a3a3c; }
+        .btn-red { background-color: #ff3b30; color: #fff; }
+        .btn-yellow { background-color: #ffcc00; color: #000; }
+        
+        .row { display: flex; gap: 10px; }
+        .row .btn { flex: 1; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- МЕНЮ ДЛЯ ПОЛЬЗОВАТЕЛЕЙ -->
+    <div id="user-menu">
+        <button class="btn btn-gray" onclick="sendAction('market')">🛒 Купить аккаунт</button>
+        <button class="btn btn-green" onclick="sendAction('topup')">💳 Пополнить баланс</button>
+        <div class="row">
+            <button class="btn btn-dark" onclick="sendAction('profile')">👤 Мой профиль</button>
+            <button class="btn btn-dark" onclick="sendAction('promo')">🎟 Промокоды</button>
+        </div>
+        <button class="btn btn-gray" onclick="sendAction('reviews')">📝 Отзывы</button>
+        <div class="row">
+            <button class="btn btn-red" onclick="sendAction('rules')">⚠️ Правила</button>
+            <button class="btn btn-red" onclick="sendAction('support')">🆘 Тех. поддержка</button>
+        </div>
+        <button class="btn btn-dark" onclick="sendAction('instruction')">📖 Инструкция</button>
+    </div>
+
+    <!-- МЕНЮ ДЛЯ АДМИНА (скрыто по умолчанию) -->
+    <div id="admin-menu" class="hidden">
+        <button class="btn btn-yellow" onclick="sendAction('admin_balance_add')">💰 Начислить баланс</button>
+        <button class="btn btn-yellow" onclick="sendAction('admin_balance_sub')">💸 Списать баланс</button>
+        <div class="row">
+            <button class="btn btn-green" onclick="sendAction('admin_promo_create')">🎟 Создать промокод</button>
+            <button class="btn btn-red" onclick="sendAction('admin_promo_delete')">🗑 Удалить промокод</button>
+        </div>
+        <button class="btn btn-dark" onclick="sendAction('admin_promo_history')">📜 История промокодов</button>
+        <button class="btn btn-dark" onclick="sendAction('admin_user_info')">👤 Профиль юзера</button>
+        <div class="row">
+            <button class="btn btn-red" onclick="sendAction('admin_ban')">🚫 Забанить</button>
+            <button class="btn btn-green" onclick="sendAction('admin_unban')">✅ Разбанить</button>
+        </div>
+        <button class="btn btn-dark" onclick="sendAction('admin_banlist')">📋 Список банов</button>
+        <div class="row">
+            <button class="btn btn-red" onclick="sendAction('admin_block_market')">🚫 Блок маркета</button>
+            <button class="btn btn-green" onclick="sendAction('admin_unblock_market')">✅ Разблок маркета</button>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.setHeaderColor('#1c1c1e');
+
+        // Замени эти ID на свои реальные Telegram ID
+        const ADMIN_IDS = [123456789, 987654321]; 
+
+        // Проверяем, админ ли это
+        if (tg.initDataUnsafe.user && ADMIN_IDS.includes(tg.initDataUnsafe.user.id)) {
+            document.getElementById('user-menu').classList.add('hidden');
+            document.getElementById('admin-menu').classList.remove('hidden');
+        }
+
+        function sendAction(action) {
+            tg.sendData(JSON.stringify({ action: action }));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
